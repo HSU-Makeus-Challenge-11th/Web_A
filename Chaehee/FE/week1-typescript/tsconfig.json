@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "rootDir": "./src", // typescript파일을 작성할 폴더를 정함
+    "outDir": "./dist", // 컴파일된 JS 파일이 만들어질 폴더를 정함
+    "strict": true      // 타입을 더 꼼꼼하게 검사.
+  },
+  "include": ["src/**/*.ts"]
+}

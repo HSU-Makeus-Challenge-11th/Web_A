@@ -1,0 +1,164 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f8faff;
+  color: #202329;
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+
+.header {
+  height: 90px;
+  background: white;
+  border-bottom: 1px solid #e1e5ee;
+}
+
+.header-inner {
+  max-width: 1280px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left,
+.header-right,
+.header nav,
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.logo img {
+  width: 32px;
+}
+
+.header a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.header-right img {
+  width: 24px;
+}
+
+.login-button {
+  padding: 12px 20px;
+  background: #2563eb;
+  color: white;
+  border-radius: 8px;
+}
+
+/* Main */
+
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+/* MovieGrid */
+
+/* 기본: 5열 */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 32px 24px;
+}
+
+/* 화면 너비 1100px 이하: 3열 */
+@media (max-width: 1100px) {
+  .movie-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* 화면 너비 800px 이하: 2열 */
+@media (max-width: 800px) {
+  .movie-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 화면 너비 520px 이하: 1열 */
+@media (max-width: 520px) {
+  .movie-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+/* MovieCard */
+
+.movie-card {
+  min-width: 0;
+}
+
+.poster-wrapper {
+  position: relative;
+}
+
+.poster {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.bookmark-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
+}
+
+.bookmark-button img {
+  width: 24px;
+}
+
+.movie-card h2 {
+  font-size: 16px;
+}
+
+.movie-card p {
+  color: #8b95a5;
+  font-size: 14px;
+}
+
+/* Pagination */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 40px;
+}
+
+.pagination button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #202329;
+  cursor: pointer;
+}
+
+/* 현재 선택된 페이지 */
+.pagination button.active {
+  background: #202329;
+  color: white;
+}
+
+/* 이전/다음 버튼 비활성화 */
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

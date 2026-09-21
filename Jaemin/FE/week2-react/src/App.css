@@ -1,0 +1,274 @@
+.header {
+  height: 72px;
+  padding: 0 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #e5e5e5;
+  background-color: #ffffff;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #111111;
+  text-decoration: none;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.logo-icon {
+  font-size: 20px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-link {
+  color: #777777;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav-link.active {
+  color: #111111;
+  font-weight: 600;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-search-button {
+  width: 36px;
+  height: 36px;
+
+  padding: 8px;
+
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.header-search-button img {
+  width: 20px;
+  height: 20px;
+}
+
+.login-button {
+  padding: 9px 18px;
+
+  border: none;
+  border-radius: 6px;
+
+  background-color: #2563eb;
+  color: #ffffff;
+
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* =========================
+   Main
+========================= */
+
+.main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 48px 24px 108px;
+}
+
+.page-title {
+  margin: 0 0 28px;
+
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* =========================
+   Movie Grid
+========================= */
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 32px 16px;
+}
+
+/* =========================
+   Movie Card
+========================= */
+
+.movie-card {
+  min-width: 0;
+}
+
+.poster-wrapper {
+  position: relative;
+
+  width: 100%;
+  aspect-ratio: 2 / 3;
+
+  overflow: hidden;
+  border-radius: 6px;
+
+  background-color: #eeeeee;
+}
+
+.movie-poster {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+  object-fit: cover;
+}
+
+.bookmark-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 32px;
+  height: 32px;
+
+  padding: 5px;
+
+  border: none;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+
+  background-color: #000000;
+
+  cursor: pointer;
+}
+
+.bookmark-button:has(img[src$="/bookmark.svg"]) {
+  border-color: #2563eb;
+  background-color: #2563eb;
+}
+
+.bookmark-button img {
+  width: 100%;
+  height: 100%;
+}
+
+.movie-info {
+  padding-top: 10px;
+}
+
+.movie-info h2 {
+  margin: 0 0 5px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movie-info p {
+  margin: 0;
+
+  color: #888888;
+
+  font-size: 12px;
+}
+
+/* =========================
+   Pagination
+========================= */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 48px;
+}
+
+.pagination button {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+
+  background-color: #ffffff;
+
+  cursor: pointer;
+}
+
+.pagination button img {
+  width: 16px;
+  height: 16px;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pagination .active {
+  background-color: #111111;
+  color: #ffffff;
+}
+
+/* =========================
+   Footer
+========================= */
+
+.footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  min-height: 68px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 10px;
+  padding: 0 max(64px, calc((100vw - 1120px) / 2));
+
+  border-top: 1px solid #e5e5e5;
+  background-color: #ffffff;
+
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+.footer img {
+  width: 28px;
+}
+
+.footer p {
+  margin: 0;
+}

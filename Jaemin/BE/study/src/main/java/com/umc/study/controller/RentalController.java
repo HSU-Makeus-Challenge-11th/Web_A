@@ -2,10 +2,7 @@ package com.umc.study.controller;
 
 import com.umc.study.service.RentalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -23,5 +20,14 @@ public class RentalController {
     ) {
         rentalService.createRental(body);
         return Map.of("message", "도서 대여가 완료되었습니다!");
+    }
+
+    // PATCH http://localhost:8080/rentals/1/return
+    @PatchMapping("/{rentalId}/return")
+    public Map<String, Object> returnRental(
+            @PathVariable("rentalId") Long rentalId
+    ) {
+        rentalService.returnRental(rentalId);
+        return Map.of("message", "도서 반납이 완료되었습니다!");
     }
 }

@@ -24,4 +24,11 @@ public class RentalRepository {
                 body.get("bookId")
         );
     }
+
+    public int updateReturnedAt(Long rentalId) {
+        String sql = "UPDATE rental SET returned_at = NOW() WHERE rental_id = ?";
+
+        // 수정된 행의 개수를 반환합니다.
+        return jdbcTemplate.update(sql, rentalId);
+    }
 }

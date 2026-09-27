@@ -1,0 +1,27 @@
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/* 선택 미션: 화면이 좁아지면 3열 → 2열 → 1열로 전환 */
+/*미디어 쿼리 사용*/
+@media (max-width: 1200px) {    /*화면 너비가 1200px이하일 때만 적용*/
+  .movie-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {     /*화면 너비가 800px이하일 때만 적용*/
+  .movie-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {     /*화면 너비가 500px이하일 때만 적용*/
+  .movie-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

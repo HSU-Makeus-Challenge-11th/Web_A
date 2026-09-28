@@ -1,0 +1,28 @@
+.movie-grid {
+  /*
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;*/
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/*
+@media (max-width: 1200px) {    
+  .movie-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {    
+  .movie-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {     
+  .movie-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+*/

@@ -22,6 +22,11 @@ public class BookRepository {
         return jdbcTemplate.queryForList(sql);
     }
 
+    public List<Map<String, Object>> findByCategoryId(Long categoryId) {
+        String sql = "SELECT * FROM book WHERE category_id = ?";
+        return jdbcTemplate.queryForList(sql, categoryId);
+    }
+
     public void save(Map<String, Object> body){
         // book_id는 AUTO_INCREMENT이므로 생략, is_available은 기본 true로 삽입
         String sql = "INSERT INTO book (category_id, title, description, is_available) VALUES (?, ?, ?, true)";

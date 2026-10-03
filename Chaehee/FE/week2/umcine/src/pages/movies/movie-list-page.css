@@ -1,0 +1,14 @@
+.page {
+  background-color: #f7f7f8;
+  min-height: 100vh;
+  padding-top: 32px;
+  padding-bottom: 60px;
+  box-sizing: border-box;
+}
+
+.page__title {
+  padding: 0 40px;
+  margin: 0 0 24px;
+  font-size: 24px;
+  font-weight: 700;
+}

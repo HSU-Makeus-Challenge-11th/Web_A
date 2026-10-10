@@ -1,31 +1,46 @@
-// src/main/java/.../service/BookService.java
 package com.umc.study.service;
 
+import com.umc.study.dto.BookResponse;
+import com.umc.study.dto.CreateBookRequest;
+import com.umc.study.entity.Book;
+import com.umc.study.entity.Category;
 import com.umc.study.repository.BookRepository;
+import com.umc.study.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Map;
 
-@Service // 비즈니스 로직을 수행하는 메인 셰프 계층
+@Service
 @RequiredArgsConstructor
 public class BookService {
-
-    // 창고지기(Repository)를 생성자 주입으로 데려옵니다.
     private final BookRepository bookRepository;
+    private final CategoryRepository categoryRepository;
 
-    public List<Map<String, Object>> getAllBooks() {
-        // 지금은 별도 가공 없이 창고지기가 가져온 도서 목록을 그대로 반환합니다.
-        return bookRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<BookResponse> getBooks(String keyword) {
+        List<Book> books = (keyword == null || keyword.isBlank())
+                ? bookRepository.findAllByOrderByBookIdDesc()
+                : bookRepository.findByTitleContainingOrderByBookIdDesc(keyword.trim());
+
+        return books.stream()
+                .map(BookResponse::from)
+                .toList();
     }
 
-    public List<Map<String, Object>> getBooksByCategoryId(Long categoryId) {
-        return bookRepository.findByCategoryId(categoryId);
-    }
+    @Transactional
+    public BookResponse createBook(CreateBookRequest request) {
+        if (bookRepository.existsByTitle(request.title())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 등록된 도서 제목입니다.");
+        }
 
-    // BookService.java에 추가
-    public void createBook(Map<String, Object> body){
-        bookRepository.save(body);
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."));
+
+        Book book = new Book(category, request.title(), request.description());
+        return BookResponse.from(bookRepository.save(book));
     }
 }

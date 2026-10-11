@@ -1,4 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router';
+import { BookmarkButton } from '../../components/bookmark-button';
 import { movies } from '../../data/movies';
 
 export function MovieDetailPage() {
@@ -59,17 +60,9 @@ export function MovieDetailPage() {
             {movie.tagline}
           </h2>
           <p className="text-[15px] leading-relaxed text-gray-500">{movie.overview}</p>
-          <button
-            type="button"
-            className="mt-1 flex h-10 items-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white"
-          >
-            <img
-              src="/icons/movie-icons/bookmark-outline.svg"
-              alt=""
-              className="h-4 w-4 brightness-0 invert"
-            />
-            즐겨찾기
-          </button>
+          <div className="mt-1 flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white">
+            <BookmarkButton movieId={movie.id} />
+          </div>
         </div>
 
         <aside className="flex flex-col gap-2 md:col-span-2 lg:col-span-1 lg:border-l lg:border-gray-200 lg:pl-8">

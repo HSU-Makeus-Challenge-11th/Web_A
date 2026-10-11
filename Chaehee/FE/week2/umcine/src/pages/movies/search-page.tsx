@@ -1,5 +1,6 @@
 import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect, useState, type SubmitEvent } from 'react';
+import { BookmarkButton } from '../../components/bookmark-button';
 import { movies } from '../../data/movies';
 import { cn } from '../../utils/cn';
 
@@ -111,13 +112,18 @@ export function SearchPage() {
                     <p className="line-clamp-2 text-sm leading-relaxed text-gray-500">
                       {movie.overview}
                     </p>
-                    <Link
-                      to="/movies/$movieId"
-                      params={{ movieId: String(movie.id) }}
-                      className="mt-3 text-sm font-semibold text-blue-600"
-                    >
-                      상세 보기 →
-                    </Link>
+                    <div className="mt-3 flex items-center gap-4 text-sm font-semibold">
+                      <Link
+                        to="/movies/$movieId"
+                        params={{ movieId: String(movie.id) }}
+                        className="text-blue-600"
+                      >
+                        상세 보기 →
+                      </Link>
+                      <div className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-900">
+                        <BookmarkButton movieId={movie.id} />
+                      </div>
+                    </div>
                   </div>
                 </li>
               ))}

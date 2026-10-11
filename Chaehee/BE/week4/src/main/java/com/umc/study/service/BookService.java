@@ -7,6 +7,7 @@ import com.umc.study.entity.Category;
 import com.umc.study.repository.BookRepository;
 import com.umc.study.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +45,15 @@ public class BookService {
         Category category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."));
 
+        if (bookRepository.existsByTitle(request.title())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 등록된 제목의 도서입니다.");
+        }
+
         Book book = new Book(category, request.title(), request.description());
-        return BookResponse.from(bookRepository.save(book));
+        try {
+            return BookResponse.from(bookRepository.saveAndFlush(book));
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 등록된 제목의 도서입니다.");
+        }
     }
 }

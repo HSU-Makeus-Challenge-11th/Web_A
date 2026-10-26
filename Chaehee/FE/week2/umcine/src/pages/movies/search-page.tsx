@@ -25,26 +25,30 @@ export function SearchPage() {
   useEffect(() => {
     let ignore = false;
 
-    setMovies([]);
-    setErrorMessage(null);
+    function loadSearchResults() {
+      setMovies([]);
+      setErrorMessage(null);
 
-    if (!normalizedQuery) {
-      setIsLoading(false);
-      return;
+      if (!normalizedQuery) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+
+      searchMovies({ query: normalizedQuery })
+        .then((response) => {
+          if (!ignore) setMovies(response.results);
+        })
+        .catch(() => {
+          if (!ignore) setErrorMessage('검색 결과를 불러오지 못했어요.');
+        })
+        .finally(() => {
+          if (!ignore) setIsLoading(false);
+        });
     }
 
-    setIsLoading(true);
-
-    searchMovies({ query: normalizedQuery })
-      .then((response) => {
-        if (!ignore) setMovies(response.results);
-      })
-      .catch(() => {
-        if (!ignore) setErrorMessage('검색 결과를 불러오지 못했어요.');
-      })
-      .finally(() => {
-        if (!ignore) setIsLoading(false);
-      });
+    loadSearchResults();
 
     return () => {
       ignore = true;

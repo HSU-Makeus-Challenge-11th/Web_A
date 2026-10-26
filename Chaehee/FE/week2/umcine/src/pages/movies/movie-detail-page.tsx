@@ -19,17 +19,17 @@ export function MovieDetailPage() {
   useEffect(() => {
     let ignore = false;
 
-    setMovie(null);
-    setErrorMessage(null);
-
-    if (!isValidMovieId) {
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-
     async function loadMovieDetail() {
+      setMovie(null);
+      setErrorMessage(null);
+
+      if (!isValidMovieId) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+
       try {
         const response = await getMovieDetail(parsedMovieId);
         if (!ignore) setMovie(response);

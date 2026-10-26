@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
+import { getMoviesWithFetch } from '../../api/movies/get-movies-with-fetch';
+import type { TmdbMovieListItem } from '../../api/movies/models';
 import MovieGrid from '../../components/movies/movie-grid';
-import { movies } from '../../data/movies';
 import { useViewSettingsStore, type MovieSortOrder } from '../../stores/view-settings-store';
 import { cn } from '../../utils/cn';
 
@@ -12,9 +14,36 @@ export function MovieListPage() {
   const sortOrder = useViewSettingsStore((state) => state.sortOrder);
   const setSortOrder = useViewSettingsStore((state) => state.setSortOrder);
 
+  const [movies, setMovies] = useState<TmdbMovieListItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+    async function loadMovies() {
+      setIsLoading(true);
+      setErrorMessage(null);
+
+      try {
+        const response = await getMoviesWithFetch(1);
+        if (!ignore) setMovies(response.results);
+      } catch {
+        if (!ignore) setErrorMessage('영화 목록을 불러오지 못했어요.');
+      } finally {
+        if (!ignore) setIsLoading(false);
+      }
+    }
+
+    loadMovies();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   const sortedMovies = [...movies].sort((a, b) =>
     sortOrder === 'latest'
-      ? b.releaseDate.localeCompare(a.releaseDate)
+      ? b.release_date.localeCompare(a.release_date)
       : a.title.localeCompare(b.title, 'ko'),
   );
 
@@ -41,7 +70,16 @@ export function MovieListPage() {
           ))}
         </div>
       </div>
-      <MovieGrid movies={sortedMovies} />
+
+      {isLoading ? (
+        <p className="py-16 text-center text-gray-500">영화 목록을 불러오는 중이에요.</p>
+      ) : errorMessage ? (
+        <p className="py-16 text-center text-red-500">{errorMessage}</p>
+      ) : sortedMovies.length === 0 ? (
+        <p className="py-16 text-center text-gray-500">조건에 맞는 영화가 없어요.</p>
+      ) : (
+        <MovieGrid movies={sortedMovies} />
+      )}
     </main>
   );
 }

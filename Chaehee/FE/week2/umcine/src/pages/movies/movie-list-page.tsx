@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getMoviesWithFetch } from '../../api/movies/get-movies-with-fetch';
+import { getMovies } from '../../api/movies/get-movies';
 import type { TmdbMovieListItem } from '../../api/movies/models';
 import MovieGrid from '../../components/movies/movie-grid';
 import { useViewSettingsStore, type MovieSortOrder } from '../../stores/view-settings-store';
@@ -25,7 +25,7 @@ export function MovieListPage() {
       setErrorMessage(null);
 
       try {
-        const response = await getMoviesWithFetch(1);
+        const response = await getMovies({ page: 1 });
         if (!ignore) setMovies(response.results);
       } catch {
         if (!ignore) setErrorMessage('영화 목록을 불러오지 못했어요.');

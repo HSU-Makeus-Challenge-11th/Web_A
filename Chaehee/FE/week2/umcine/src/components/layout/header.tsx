@@ -8,6 +8,7 @@ export function Header() {
   const { pathname } = useLocation();
   const isMovieActive = pathname === '/' || pathname.startsWith('/movies');
   const isSearchActive = pathname.startsWith('/search');
+  const isMyActive = pathname.startsWith('/my');
 
   return (
     <header className="border-b border-gray-200 bg-white">
@@ -25,9 +26,9 @@ export function Header() {
             <Link to="/search" className={cn(navLinkBase, isSearchActive && navLinkActive)}>
               검색
             </Link>
-            <a href="#" className={navLinkBase}>
+            <Link to="/my" className={cn(navLinkBase, isMyActive && navLinkActive)}>
               내 정보
-            </a>
+            </Link>
           </nav>
         </div>
 

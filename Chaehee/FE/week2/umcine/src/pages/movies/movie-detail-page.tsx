@@ -1,7 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
 import { getMovieDetail } from '../../api/movies/get-movie-detail';
-import type { TmdbMovieDetail } from '../../api/movies/models';
 import { BookmarkButton } from '../../components/bookmark-button';
 import { formatRuntime } from '../../utils/movies/format-runtime';
 import { getMovieDetailErrorMessage } from '../../utils/movies/get-movie-detail-error-message';
@@ -12,46 +11,21 @@ export function MovieDetailPage() {
   const parsedMovieId = Number(movieId);
   const isValidMovieId = Number.isInteger(parsedMovieId) && parsedMovieId > 0;
 
-  const [movie, setMovie] = useState<TmdbMovieDetail | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function loadMovieDetail() {
-      setMovie(null);
-      setErrorMessage(null);
-
-      if (!isValidMovieId) {
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-
-      try {
-        const response = await getMovieDetail(parsedMovieId);
-        if (!ignore) setMovie(response);
-      } catch (error) {
-        if (!ignore) setErrorMessage(getMovieDetailErrorMessage(error));
-      } finally {
-        if (!ignore) setIsLoading(false);
-      }
-    }
-
-    loadMovieDetail();
-
-    return () => {
-      ignore = true;
-    };
-  }, [parsedMovieId, isValidMovieId]);
+  const movieDetailQuery = useQuery({
+    queryKey: ['movies', 'detail', parsedMovieId],
+    queryFn: () => getMovieDetail(parsedMovieId),
+    enabled: isValidMovieId,
+  });
 
   const statusMessage = !isValidMovieId
     ? '올바르지 않은 영화 번호예요.'
-    : isLoading
+    : movieDetailQuery.isPending
       ? '영화 정보를 불러오는 중이에요.'
-      : errorMessage;
+      : movieDetailQuery.isError
+        ? getMovieDetailErrorMessage(movieDetailQuery.error)
+        : null;
+
+  const movie = movieDetailQuery.data;
 
   if (statusMessage || !movie) {
     return (

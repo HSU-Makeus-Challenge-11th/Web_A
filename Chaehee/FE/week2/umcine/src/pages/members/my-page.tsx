@@ -1,6 +1,7 @@
 import { checkEmail } from '../../api/members/check-email';
 import { checkNickname } from '../../api/members/check-nickname';
 import { AvailabilityCheckForm } from '../../components/members/availability-check-form';
+import { MemberRatings } from '../../components/members/member-ratings';
 
 export function MyPage() {
   return (
@@ -27,6 +28,8 @@ export function MyPage() {
           />
         </div>
       </section>
+
+      <MemberRatings />
     </main>
   );
 }

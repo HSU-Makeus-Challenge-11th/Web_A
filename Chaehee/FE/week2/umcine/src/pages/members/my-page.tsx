@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { FavoriteMovies } from '../../components/members/favorite-movies';
 import { MOCK_MEMBER } from '../../data/mock-member';
 
@@ -6,6 +7,12 @@ export function MyPage() {
     <main className="mx-auto w-full max-w-[1328px] px-6 pb-16 pt-8">
       <div className="flex items-center justify-between border-b border-gray-200 pb-5">
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">내 정보</h1>
+        <Link
+          to="/my/edit"
+          className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-bold text-white"
+        >
+          정보 수정
+        </Link>
       </div>
 
       <section className="border-b border-gray-200 py-5">

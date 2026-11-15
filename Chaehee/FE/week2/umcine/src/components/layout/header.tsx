@@ -40,12 +40,12 @@ export function Header() {
           >
             <img src="/icons/movie-icons/search.svg" alt="" className="h-5 w-5 opacity-70" />
           </Link>
-          <button
-            type="button"
-            className="h-10 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white"
+          <Link
+            to="/login"
+            className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white"
           >
             로그인
-          </button>
+          </Link>
         </div>
       </div>
     </header>

@@ -1,3 +1,4 @@
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useState, type SubmitEvent } from 'react';
 import { checkEmail } from '../../api/members/check-email';
 import { checkNickname } from '../../api/members/check-nickname';
@@ -101,6 +102,7 @@ export function SignupPage() {
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -114,6 +116,7 @@ export function SignupPage() {
         password: form.password,
       });
       alert(response.message);
+      navigate({ to: '/login' });
     } catch {
       alert('회원가입에 실패했어요. 다시 시도해 주세요.');
     } finally {
@@ -236,6 +239,13 @@ export function SignupPage() {
           {isSubmitting ? '가입 중' : '가입하기'}
         </button>
       </form>
+
+      <p className="mt-5 text-center text-sm text-gray-500">
+        이미 계정이 있나요?{' '}
+        <Link to="/login" className="font-bold text-blue-600">
+          로그인
+        </Link>
+      </p>
     </main>
   );
 }

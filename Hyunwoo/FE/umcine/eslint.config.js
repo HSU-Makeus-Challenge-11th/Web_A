@@ -19,4 +19,11 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: ['src/routes/**/*.tsx'],
+    rules: {
+      // TanStack Router's Vite plugin handles route component fast refresh.
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

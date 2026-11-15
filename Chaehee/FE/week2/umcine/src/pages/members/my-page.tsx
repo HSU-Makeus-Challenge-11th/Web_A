@@ -1,35 +1,41 @@
-import { checkEmail } from '../../api/members/check-email';
-import { checkNickname } from '../../api/members/check-nickname';
-import { AvailabilityCheckForm } from '../../components/members/availability-check-form';
-import { MemberRatings } from '../../components/members/member-ratings';
+import { Link } from '@tanstack/react-router';
+import { FavoriteMovies } from '../../components/members/favorite-movies';
+import { MOCK_MEMBER } from '../../data/mock-member';
 
 export function MyPage() {
   return (
     <main className="mx-auto w-full max-w-[1328px] px-6 pb-16 pt-8">
-      <h1 className="mb-6 text-4xl font-extrabold tracking-tight text-gray-900">내 정보</h1>
+      <div className="flex items-center justify-between border-b border-gray-200 pb-5">
+        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">내 정보</h1>
+        <Link
+          to="/my/edit"
+          className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-bold text-white"
+        >
+          정보 수정
+        </Link>
+      </div>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-6">
-        <h2 className="text-xl font-bold text-gray-900">회원 정보 확인</h2>
-        <p className="mt-1 text-sm text-gray-400">
-          가입 전에 닉네임과 이메일을 사용할 수 있는지 확인해 보세요.
-        </p>
-
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
-          <AvailabilityCheckForm
-            label="닉네임"
-            placeholder="예: 수현"
-            check={checkNickname}
-          />
-          <AvailabilityCheckForm
-            label="이메일"
-            placeholder="예: noco@umc.com"
-            inputType="email"
-            check={checkEmail}
-          />
+      <section className="border-b border-gray-200 py-5">
+        <h2 className="text-lg font-bold text-gray-900">기본 정보</h2>
+        <div className="mt-4 grid grid-cols-[auto_1fr_1fr] items-center gap-x-7">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-200">
+            <img src="/icons/movie-icons/person.svg" alt="" className="h-8 w-8" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">닉네임</p>
+            <p className="mt-1 font-bold text-gray-900">{MOCK_MEMBER.nickname}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">이메일</p>
+            <p className="mt-1 font-bold text-gray-900">{MOCK_MEMBER.email}</p>
+          </div>
         </div>
       </section>
 
-      <MemberRatings />
+      <section className="py-8">
+        <h2 className="mb-5 text-lg font-bold text-gray-900">내 즐겨찾기</h2>
+        <FavoriteMovies />
+      </section>
     </main>
   );
 }

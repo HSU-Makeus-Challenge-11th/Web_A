@@ -3,8 +3,8 @@ export interface Movie {
   title: string;
   originalTitle: string;
   releaseDate: string;
-  posterPath: string;
-  backdropPath: string;
+  posterPath: string | null;
+  backdropPath: string | null;
   genres: string[];
   runtime: string;
   tagline: string;

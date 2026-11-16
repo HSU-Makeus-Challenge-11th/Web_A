@@ -6,6 +6,7 @@ import com.umc.movie.dto.MovieRecordResponse;
 import com.umc.movie.interceptor.AuthInterceptor;
 import com.umc.movie.service.MovieRecordService;
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class MovieRecordController {
 
     @PostMapping("/movie-records")
     public ResponseEntity<ApiResponse<MovieRecordResponse>> create(
-            @RequestAttribute(AuthInterceptor.MEMBER_ID) Long memberId,
+            @Parameter(hidden = true) @RequestAttribute(AuthInterceptor.MEMBER_ID) Long memberId,
             @RequestBody @Valid CreateMovieRecordRequest request
     ) {
         MovieRecordResponse response = movieRecordService.create(memberId, request);

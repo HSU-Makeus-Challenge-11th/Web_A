@@ -69,12 +69,34 @@ CORS 허용 출처는 `http://localhost:5173`입니다.
 성공 응답의 `result.rating`과 `result.favorite`를 확인합니다.
 `false`이면 평점만 저장하고 `result.favorite`는 `null`입니다.
 
-## 검증
+## Swagger UI
+
+서버 실행 후 `http://localhost:8080/swagger-ui.html`에 접속합니다.
+OpenAPI JSON은 `http://localhost:8080/v3/api-docs`에서 확인할 수 있습니다.
+
+1. `/auth/login`에서 로그인하고 응답의 `result.accessToken`을 복사합니다.
+2. Swagger UI의 **Authorize**에서 토큰 문자열만 입력합니다. `Bearer `는 자동으로 붙습니다.
+3. **즐겨찾기**, **영화 기록** 항목을 펼쳐 요청 예시와 HTTP 상태별 응답 예시를 확인합니다.
+4. **Try it out → Execute**로 실제 요청을 보낼 수 있습니다. 등록·해제는 실제 DB에 반영됩니다.
+
+공개 API에는 자물쇠가 없으며, 인증 API에는 `Authorization: Bearer {token}`이 필요합니다.
+문서 경로만 인증 예외에 추가했고 `/favorites`, `/movie-records`는 계속 보호됩니다.
+등록 요청에는 `memberId`를 보내지 않습니다.
+
+제출 캡처: 8주차 API 5개가 보이는 화면, 한 API를 펼친 요청·성공/실패 응답 예시 화면.
+예시는 문서에 정의한 샘플이며, 실제 호출 결과는 Execute 이후 Server response에서 확인합니다.
+
+## 검증 명령어
 
 ```powershell
 .\gradlew.bat test
 .\gradlew.bat bootJar
 ```
 
-현재 테스트는 Spring 컨텍스트 로드 테스트 1개입니다.
-테스트에도 MySQL 스키마 및 위 환경변수가 필요합니다.
+기존 Spring 컨텍스트 로드 테스트에는 MySQL 스키마 및 위 환경변수가 필요합니다.
+
+Swagger 전용 테스트는 H2 테스트 DB를 사용하므로 MySQL 없이 실행할 수 있습니다.
+
+```powershell
+.\gradlew.bat test --tests com.umc.movie.OpenApiDocumentationTests
+```

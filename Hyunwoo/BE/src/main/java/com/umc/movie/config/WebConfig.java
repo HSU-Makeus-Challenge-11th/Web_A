@@ -16,6 +16,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
+    // 실제 인증 예외와 OpenAPI의 공개 API 표시에 같은 목록을 사용합니다.
+    public static final List<String> PUBLIC_PATHS = List.of(
+            "/auth/**", "/members", "/members/nickname/**", "/members/email/**",
+            "/members/*/ratings", "/error",
+            "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**",
+            "/v3/api-docs.yaml"
+    );
+
     private final AuthInterceptor authInterceptor;
     private final LoginMemberArgumentResolver loginMemberArgumentResolver;
 
@@ -34,14 +42,7 @@ public class WebConfig implements WebMvcConfigurer {
                 // 일단 모든 경로를 잠그고
                 .addPathPatterns("/**")
                 // 로그인 없이도 써야 하는 경로만 예외로 열어줍니다
-                .excludePathPatterns(
-                        "/auth/**",              // 로그인
-                        "/members",              // 회원가입 (POST /members)
-                        "/members/nickname/**",  // 닉네임 중복 체크
-                        "/members/email/**",     // 이메일 중복 체크
-                        "/members/*/ratings",    // 유저별 평점 조회 (누구나 볼 수 있는 목록)
-                        "/error"                 // 스프링이 내부적으로 쓰는 경로
-                );
+                .excludePathPatterns(PUBLIC_PATHS);
     }
 
     @Override

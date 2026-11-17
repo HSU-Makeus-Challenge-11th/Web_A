@@ -100,6 +100,7 @@ MySQL 및 별도의 환경변수 없이 실행할 수 있습니다. 실제 서�
 - `FavoriteApiTest`: 인증·등록·중복·여부 조회·문서 공개 통합 테스트 5개
 - `RatingServiceTest`: 중복 등록 `409/RATING409_1`, 타인 평점 수정 `403/RATING403_1` 단위 테스트 2개
 - `RatingApiTest`: 토큰 없는 등록 `401/AUTH401_2`, 인증된 등록 `201/COMMON201` 통합 테스트 2개
+- `MovieRecordApiTest`: 즐겨찾기 중복 실패 시 먼저 저장한 평점이 롤백되는지 확인하는 통합 테스트 1개
 - `OpenApiDocumentationTests`: 문서 예시·스키마·공개/인증 구분 테스트 5개
 - `MovieApplicationTests`: Spring 컨텍스트 로드 테스트 1개
 
@@ -114,4 +115,3 @@ Swagger 문서만 검증하려면 다음 명령어를 사용합니다.
 ```powershell
 .\gradlew.bat test --tests com.umc.movie.OpenApiDocumentationTests
 ```
-

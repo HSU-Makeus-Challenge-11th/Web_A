@@ -73,6 +73,44 @@ class OpenApiDocumentationTests {
     }
 
     @Test
+    void documentsRatingsAndMyInfoWithSchemasSecurityAndFailureCodes() throws Exception {
+        String document = mvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        JsonNode api = mapper.readTree(document);
+        String[][] endpoints = {
+                {"/ratings", "post"}, {"/ratings/{ratingId}", "patch"}, {"/ratings/{ratingId}", "delete"},
+                {"/members/me", "get"}, {"/members/me", "patch"}
+        };
+        for (String[] endpoint : endpoints) {
+            JsonNode operation = api.path("paths").path(endpoint[0]).path(endpoint[1]);
+            assertThat(operation.path("summary").asText()).isNotBlank();
+            assertThat(operation.path("description").asText()).contains("인증 필요");
+            assertThat(operation.at("/security/0").has("bearerAuth")).isTrue();
+            assertThat(operation.at("/responses/401/content/application~1json/examples/AUTH401_2/value/code").asText())
+                    .isEqualTo("AUTH401_2");
+        }
+        JsonNode create = api.path("paths").path("/ratings").path("post");
+        assertThat(create.at("/responses/201/content/application~1json/examples/성공/value/code").asText())
+                .isEqualTo("COMMON201");
+        assertThat(create.at("/responses/409/content/application~1json/examples/RATING409_1/value/code").asText())
+                .isEqualTo("RATING409_1");
+        for (String method : new String[]{"patch", "delete"}) {
+            assertThat(api.path("paths").path("/ratings/{ratingId}").path(method)
+                    .at("/responses/403/content/application~1json/examples/RATING403_1/value/code").asText())
+                    .isEqualTo("RATING403_1");
+        }
+        JsonNode list = api.path("paths").path("/members/{memberId}/ratings").path("get");
+        assertThat(list.path("summary").asText()).isNotBlank();
+        assertThat(list.path("description").asText()).contains("토큰 불필요");
+        assertThat(list.path("security").isEmpty()).isTrue();
+        assertThat(list.at("/responses/200/content/application~1json/examples/성공/value").isArray()).isTrue();
+        JsonNode properties = api.at("/components/schemas/CreateRatingRequest/properties");
+        assertThat(properties.at("/movieId/description").asText()).isNotBlank();
+        assertThat(properties.at("/score/description").asText()).contains("1~5");
+        assertThat(properties.has("memberId")).isFalse();
+    }
+
+    @Test
     void swaggerUiAndConfigurationArePublic() throws Exception {
         mvc.perform(get("/swagger-ui.html")).andExpect(status().is3xxRedirection());
         mvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());

@@ -1,16 +1,12 @@
 package com.umc.movie.config;
 
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.examples.Example;
-import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,19 +21,6 @@ public class OpenApiConfig {
 
     private static final String BEARER = "bearerAuth";
     private static final String JSON = "application/json";
-
-    @Bean
-    public OpenAPI movieOpenAPI() {
-        return new OpenAPI()
-                .info(new Info().title("UMCine API").version("8주차")
-                        .description("공개 API는 토큰 없이 호출할 수 있습니다. 자물쇠가 표시된 API는 "
-                                + "Authorization: Bearer {token} 헤더가 필요합니다. "
-                                + "로그인 후 Authorize에 accessToken 문자열만 입력하세요. "
-                                + "즐겨찾기와 영화 기록 요청에는 memberId를 보내지 않습니다."))
-                .components(new Components().addSecuritySchemes(BEARER,
-                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer")
-                                .bearerFormat("JWT").description("로그인 응답의 result.accessToken (Bearer 접두사 제외)")));
-    }
 
     @Bean
     public OpenApiCustomizer movieApiDocumentation() {
@@ -57,6 +40,50 @@ public class OpenApiConfig {
                 }
 
                 switch (method.name() + " " + path) {
+                    case "POST /ratings" -> {
+                        describe(operation, "평점", "영화에 평점 등록");
+                        requestExample(operation, Map.of("movieId", 550, "score", 5, "comment", "다시 보고 싶은 영화입니다."));
+                        success(operation, "201", "평점을 등록했습니다.", rating());
+                        validation(operation, "별점은 5점 이하여야 합니다.");
+                        memberNotFound(operation);
+                        failure(operation, "409", "RATING409_1: 같은 영화에 중복 평점 / COMMON4091: DB 중복 제약 위반",
+                                "RATING409_1", "이미 이 영화에 평점을 남기셨습니다.");
+                        errorExample(operation, "409", "COMMON4091", "이미 존재하는 데이터입니다.");
+                    }
+                    case "PATCH /ratings/{ratingId}", "DELETE /ratings/{ratingId}" -> {
+                        boolean update = "PATCH".equals(method.name());
+                        describe(operation, "평점", update ? "내가 작성한 평점 수정" : "내가 작성한 평점 삭제");
+                        if (update) {
+                            requestExample(operation, Map.of("score", 5, "comment", "다시 보고 싶은 영화입니다."));
+                            validation(operation, "별점은 5점 이하여야 합니다.");
+                        }
+                        success(operation, "200", update ? "평점을 수정했습니다." : "평점을 삭제했습니다.", update ? rating() : null);
+                        failure(operation, "403", "RATING403_1: 다른 회원이 작성한 평점",
+                                "RATING403_1", "본인이 작성한 평점만 수정하거나 삭제할 수 있습니다.");
+                        failure(operation, "404", "RATING404_1: 평점 없음", "RATING404_1", "해당 평점을 찾을 수 없습니다.");
+                    }
+                    case "GET /members/{memberId}/ratings" -> {
+                        describe(operation, "평점", "회원이 작성한 평점 목록 조회 (최신 등록순)");
+                        // 이 공개 API는 ApiResponse 포장 없이 배열을 직접 반환합니다.
+                        operation.getResponses().get("200").setDescription("회원의 평점 목록. 평점이 없으면 빈 배열을 반환합니다.");
+                        responseMedia(operation, "200").addExamples("성공", new Example().value(List.of(rating())))
+                                .addExamples("빈 목록", new Example().value(List.of()));
+                        memberNotFound(operation);
+                    }
+                    case "GET /members/me", "PATCH /members/me" -> {
+                        boolean update = "PATCH".equals(method.name());
+                        describe(operation, "회원", update ? "내 닉네임 수정" : "내 정보 조회");
+                        if (update) {
+                            requestExample(operation, Map.of("nickname", "영화조아"));
+                            validation(operation, "닉네임은 2자 이상 12자 이하여야 합니다.");
+                            failure(operation, "409", "MEMBER409_1: 닉네임 중복 / COMMON4091: DB 중복 제약 위반",
+                                    "MEMBER409_1", "이미 사용 중인 닉네임입니다.");
+                            errorExample(operation, "409", "COMMON4091", "이미 존재하는 데이터입니다.");
+                        }
+                        success(operation, "200", update ? "회원 정보를 수정했습니다." : "회원 정보를 조회했습니다.",
+                                Map.of("email", "challenger@umc.com", "nickname", "영화조아", "createdAt", "2026-11-16T15:00:00"));
+                        memberNotFound(operation);
+                    }
                     case "POST /favorites" -> {
                         describe(operation, "즐겨찾기", "즐겨찾기 등록");
                         requestExample(operation, Map.of("movieId", 550));
@@ -116,6 +143,16 @@ public class OpenApiConfig {
     private void describe(Operation operation, String tag, String summary) {
         operation.setTags(List.of(tag));
         operation.setSummary(summary);
+        operation.setDescription(operation.getDescription() + "\n\n" + summary + ".");
+    }
+
+    private void memberNotFound(Operation operation) {
+        failure(operation, "404", "MEMBER404_1: 회원 없음", "MEMBER404_1", "해당 회원을 찾을 수 없습니다.");
+    }
+
+    private Map<String, Object> rating() {
+        return Map.of("ratingId", 1, "movieId", 550, "score", 5, "comment", "다시 보고 싶은 영화입니다.",
+                "createdAt", "2026-11-16T15:00:00", "updatedAt", "2026-11-16T15:00:00");
     }
 
     private void movieIdExample(Operation operation) {

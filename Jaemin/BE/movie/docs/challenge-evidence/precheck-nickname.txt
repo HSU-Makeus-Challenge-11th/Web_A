@@ -1,0 +1,10 @@
+POST /members
+Content-Type: application/json
+{"email":"other@example.com","password":"Umc!1234","nickname":"original"}
+
+HTTP 409
+{"isSuccess":false,"code":"MEMBER4092","message":"이미 사용 중인 닉네임입니다.","result":null}
+
+Resolved exception: MemberConflictException
+Database rows: 1
+Precheck: real repository query

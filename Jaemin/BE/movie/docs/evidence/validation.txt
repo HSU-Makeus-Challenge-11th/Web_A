@@ -1,0 +1,12 @@
+POST /members
+Content-Type: application/json
+
+{"email":"invalid","password":"Umc!1234","nickname":"valid"}
+
+HTTP 400
+{
+  "isSuccess" : false,
+  "code" : "COMMON4001",
+  "message" : "올바른 이메일 형식이 아닙니다.",
+  "result" : null
+}

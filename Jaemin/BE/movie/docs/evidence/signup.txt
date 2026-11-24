@@ -1,0 +1,16 @@
+POST /members
+Content-Type: application/json
+
+{"email":"first@example.com","password":"Umc!1234","nickname":"first"}
+
+HTTP 201
+{
+  "isSuccess" : true,
+  "code" : "COMMON201",
+  "message" : "회원가입에 성공했습니다.",
+  "result" : {
+    "memberId" : 6,
+    "email" : "first@example.com",
+    "nickname" : "first"
+  }
+}

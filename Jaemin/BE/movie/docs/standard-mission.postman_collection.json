@@ -1,0 +1,130 @@
+﻿{
+    "variable":  [
+                     {
+                         "key":  "baseUrl",
+                         "value":  "http://localhost:8080"
+                     },
+                     {
+                         "key":  "memberId",
+                         "value":  "1"
+                     },
+                     {
+                         "key":  "ratingId",
+                         "value":  "1"
+                     }
+                 ],
+    "info":  {
+                 "name":  "UMC Week 6 Standard Mission",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "item":  [
+                 {
+                     "name":  "1 회원가입",
+                     "request":  {
+                                     "body":  {
+                                                  "raw":  "{\"email\":\"umc@example.com\",\"password\":\"Umc!1234\",\"nickname\":\"moviefan\"}",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              },
+                                                  "mode":  "raw"
+                                              },
+                                     "method":  "POST",
+                                     "url":  "{{baseUrl}}/members",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 }
+                 },
+                 {
+                     "name":  "2 검증 실패",
+                     "request":  {
+                                     "body":  {
+                                                  "raw":  "{\"email\":\"invalid\",\"password\":\"Umc!1234\",\"nickname\":\"moviefan\"}",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              },
+                                                  "mode":  "raw"
+                                              },
+                                     "method":  "POST",
+                                     "url":  "{{baseUrl}}/members",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 }
+                 },
+                 {
+                     "name":  "3 평점 등록",
+                     "request":  {
+                                     "body":  {
+                                                  "raw":  "{\"movieId\":550,\"score\":4,\"comment\":\"좋아요\"}",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              },
+                                                  "mode":  "raw"
+                                              },
+                                     "method":  "POST",
+                                     "url":  "{{baseUrl}}/members/{{memberId}}/ratings",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 }
+                 },
+                 {
+                     "name":  "4 평점 수정",
+                     "request":  {
+                                     "body":  {
+                                                  "raw":  "{\"score\":5,\"comment\":\"수정 후기\"}",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              },
+                                                  "mode":  "raw"
+                                              },
+                                     "method":  "PATCH",
+                                     "url":  "{{baseUrl}}/members/{{memberId}}/ratings/{{ratingId}}",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 }
+                 },
+                 {
+                     "name":  "5 평점 조회",
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  "{{baseUrl}}/members/{{memberId}}/ratings",
+                                     "header":  [
+
+                                                ]
+                                 }
+                 },
+                 {
+                     "name":  "6 평점 삭제",
+                     "request":  {
+                                     "method":  "DELETE",
+                                     "url":  "{{baseUrl}}/members/{{memberId}}/ratings/{{ratingId}}",
+                                     "header":  [
+
+                                                ]
+                                 }
+                 }
+             ]
+}

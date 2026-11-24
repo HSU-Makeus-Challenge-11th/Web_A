@@ -1,0 +1,10 @@
+POST /members
+Content-Type: application/json
+{"email":"same@example.com","password":"Umc!1234","nickname":"another"}
+
+HTTP 409
+{"isSuccess":false,"code":"MEMBER4091","message":"이미 사용 중인 이메일입니다.","result":null}
+
+Resolved exception: DataIntegrityViolationException
+Database rows: 1
+Precheck: forced false; real repeated INSERT rejected by DB UNIQUE

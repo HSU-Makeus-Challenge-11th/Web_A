@@ -1,0 +1,19 @@
+﻿<!doctype html><html><head><meta charset="utf-8"><title>Challenge Mission - DB UNIQUE evidence</title><style>body{font-family:Segoe UI,Malgun Gothic,sans-serif;margin:32px;background:#f5f7fb;color:#172033}h1{font-size:26px}p{font-size:16px}section{background:white;padding:12px 24px;margin:16px 0;border:1px solid #ccd4e0;border-radius:8px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.55 Consolas,Malgun Gothic,monospace}h2{font-size:20px;color:#1f60ad}</style></head><body><h1>Challenge Mission: DB UNIQUE 재현 결과</h1><p>실제 MockMvc + H2 통합 테스트 기록 · 테스트 8개 통과 · 2026-11-01</p><p>사전 검사 결과만 false로 고정한 뒤 실제 DB에 반복 INSERT. 동시 요청 자체를 실행한 결과는 아닙니다.</p><section><h2>db-email</h2><pre>POST /members
+Content-Type: application/json
+{&quot;email&quot;:&quot;same@example.com&quot;,&quot;password&quot;:&quot;Umc!1234&quot;,&quot;nickname&quot;:&quot;another&quot;}
+
+HTTP 409
+{&quot;isSuccess&quot;:false,&quot;code&quot;:&quot;MEMBER4091&quot;,&quot;message&quot;:&quot;이미 사용 중인 이메일입니다.&quot;,&quot;result&quot;:null}
+
+Resolved exception: DataIntegrityViolationException
+Database rows: 1
+Precheck: forced false; real repeated INSERT rejected by DB UNIQUE</pre></section><section><h2>db-nickname</h2><pre>POST /members
+Content-Type: application/json
+{&quot;email&quot;:&quot;other@example.com&quot;,&quot;password&quot;:&quot;Umc!1234&quot;,&quot;nickname&quot;:&quot;original&quot;}
+
+HTTP 409
+{&quot;isSuccess&quot;:false,&quot;code&quot;:&quot;MEMBER4092&quot;,&quot;message&quot;:&quot;이미 사용 중인 닉네임입니다.&quot;,&quot;result&quot;:null}
+
+Resolved exception: DataIntegrityViolationException
+Database rows: 1
+Precheck: forced false; real repeated INSERT rejected by DB UNIQUE</pre></section></body></html>

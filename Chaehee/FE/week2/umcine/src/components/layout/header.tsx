@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from '@tanstack/react-router';
-import { getMe } from '../../api/members/me';
+import { useMeQuery } from '../../hooks/use-me-query';
 import { useAuthStore } from '../../stores/auth-store';
 import { cn } from '../../utils/cn';
 
@@ -14,13 +13,7 @@ export function Header() {
   const isMyActive = pathname.startsWith('/my');
 
   const accessToken = useAuthStore((state) => state.accessToken);
-  const meQuery = useQuery({
-    queryKey: ['members', 'me'],
-    queryFn: getMe,
-    enabled: Boolean(accessToken),
-    staleTime: 5 * 60 * 1000,
-    retry: false,
-  });
+  const meQuery = useMeQuery();
 
   return (
     <header className="border-b border-gray-200 bg-white">

@@ -2,14 +2,15 @@ import { useQueries } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { getMovieDetail } from '../../api/movies/get-movie-detail';
-import { useBookmarkStore } from '../../stores/bookmark-store';
+import { useFavoritesQuery } from '../../hooks/use-favorites-query';
 import { getTmdbPosterUrl } from '../../utils/movies/tmdb-image';
 import Pagination from '../movies/pagination';
 
 const PAGE_SIZE = 10;
 
 export function FavoriteMovies() {
-  const bookmarkedMovieIds = useBookmarkStore((state) => state.bookmarkedMovieIds);
+  const favoritesQuery = useFavoritesQuery();
+  const bookmarkedMovieIds = favoritesQuery.data?.map((favorite) => favorite.movieId) ?? [];
   const [page, setPage] = useState(1);
 
   const totalPages = Math.max(1, Math.ceil(bookmarkedMovieIds.length / PAGE_SIZE));
@@ -25,6 +26,14 @@ export function FavoriteMovies() {
       queryFn: () => getMovieDetail(movieId),
     })),
   });
+
+  if (favoritesQuery.isPending) {
+    return <p className="py-16 text-center text-gray-500">즐겨찾기를 불러오는 중이에요.</p>;
+  }
+
+  if (favoritesQuery.isError) {
+    return <p className="py-16 text-center text-gray-500">즐겨찾기를 불러오지 못했어요.</p>;
+  }
 
   if (bookmarkedMovieIds.length === 0) {
     return (

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
 import { getMovieDetail } from '../../api/movies/get-movie-detail';
 import { BookmarkButton } from '../../components/bookmark-button';
+import { useFavoriteStatusQuery } from '../../hooks/use-favorites-query';
 import { formatRuntime } from '../../utils/movies/format-runtime';
 import { getMovieDetailErrorMessage } from '../../utils/movies/get-movie-detail-error-message';
 import { getTmdbBackdropUrl, getTmdbPosterUrl } from '../../utils/movies/tmdb-image';
@@ -16,6 +17,7 @@ export function MovieDetailPage() {
     queryFn: () => getMovieDetail(parsedMovieId),
     enabled: isValidMovieId,
   });
+  const favoriteStatusQuery = useFavoriteStatusQuery(parsedMovieId);
 
   const statusMessage = !isValidMovieId
     ? '올바르지 않은 영화 번호예요.'
@@ -99,7 +101,10 @@ export function MovieDetailPage() {
           </h2>
           <p className="text-[15px] leading-relaxed text-gray-500">{movie.overview}</p>
           <div className="mt-1 flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white">
-            <BookmarkButton movieId={movie.id} />
+            <BookmarkButton
+              movieId={movie.id}
+              isFavorite={favoriteStatusQuery.data?.isFavorite ?? false}
+            />
           </div>
         </div>
 

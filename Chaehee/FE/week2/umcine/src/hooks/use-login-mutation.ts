@@ -14,6 +14,7 @@ export function useLoginMutation() {
       setAccessToken(response.result.accessToken);
       alert("로그인에 성공했어요.");
       queryClient.invalidateQueries({ queryKey: ["members", "me"] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
       navigate({ to: "/" });
     },
     onError: () => {

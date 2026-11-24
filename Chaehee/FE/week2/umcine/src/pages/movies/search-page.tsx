@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect, useState, type SubmitEvent } from 'react';
 import { searchMovies } from '../../api/movies/search-movies';
 import { BookmarkButton } from '../../components/bookmark-button';
+import { useFavoritesQuery } from '../../hooks/use-favorites-query';
 import { cn } from '../../utils/cn';
 import { getTmdbPosterUrl } from '../../utils/movies/tmdb-image';
 
@@ -13,6 +14,9 @@ export function SearchPage() {
 
   const normalizedQuery = query?.trim() ?? '';
   const hasQuery = normalizedQuery !== '';
+
+  const { data: favorites } = useFavoritesQuery();
+  const favoriteMovieIds = new Set(favorites?.map((favorite) => favorite.movieId));
 
   const searchQuery = useQuery({
     queryKey: ['movies', 'search', { query: normalizedQuery }],
@@ -137,7 +141,10 @@ export function SearchPage() {
                           상세 보기 →
                         </Link>
                         <div className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-900">
-                          <BookmarkButton movieId={movie.id} />
+                          <BookmarkButton
+                            movieId={movie.id}
+                            isFavorite={favoriteMovieIds.has(movie.id)}
+                          />
                         </div>
                       </div>
                     </div>

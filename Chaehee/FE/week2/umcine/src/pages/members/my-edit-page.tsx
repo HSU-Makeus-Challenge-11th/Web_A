@@ -1,24 +1,51 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
 import { checkNickname } from '../../api/members/check-nickname';
-import { MOCK_MEMBER } from '../../data/mock-member';
+import type { MemberInfo } from '../../api/members/me';
+import { useMeQuery } from '../../hooks/use-me-query';
+import { useUpdateMeMutation } from '../../hooks/use-update-me-mutation';
 import { cn } from '../../utils/cn';
 
 const MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024;
 
 export function MyEditPage() {
-  const [nickname, setNickname] = useState(MOCK_MEMBER.nickname);
+  const { data: me, isLoading, isError } = useMeQuery();
+
+  if (isLoading) {
+    return (
+      <main className="mx-auto w-full max-w-[1328px] px-6 pt-8">
+        <div className="h-40 animate-pulse rounded-lg bg-gray-100" />
+      </main>
+    );
+  }
+
+  if (isError || !me) {
+    return (
+      <main className="mx-auto w-full max-w-[1328px] px-6 pt-8">
+        <p className="text-sm text-gray-500">내 정보를 불러오지 못했어요.</p>
+      </main>
+    );
+  }
+
+  return <MyEditForm me={me} />;
+}
+
+function MyEditForm({ me }: { me: MemberInfo }) {
+  const [nickname, setNickname] = useState(me.nickname);
   const [isCheckingNickname, setIsCheckingNickname] = useState(false);
   const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const updateMeMutation = useUpdateMeMutation();
 
   const trimmedNickname = nickname.trim();
   const isNicknameValid = trimmedNickname.length >= 2 && trimmedNickname.length <= 12;
-  const isNicknameChanged = trimmedNickname !== MOCK_MEMBER.nickname;
+  const isNicknameChanged = trimmedNickname !== me.nickname;
   const showNicknameError = !isNicknameValid;
 
-  const hasChanges = isNicknameChanged || profileImageUrl !== null;
   const canSave =
-    hasChanges && isNicknameValid && (!isNicknameChanged || isNicknameAvailable);
+    isNicknameChanged &&
+    isNicknameValid &&
+    isNicknameAvailable &&
+    !updateMeMutation.isPending;
 
   useEffect(() => {
     return () => {
@@ -63,7 +90,7 @@ export function MyEditPage() {
 
   const handleSave = () => {
     if (!canSave) return;
-    alert('변경사항 저장 기능은 준비 중이에요.');
+    updateMeMutation.mutate({ nickname: trimmedNickname });
   };
 
   const handleWithdraw = () => {
@@ -84,7 +111,7 @@ export function MyEditPage() {
           disabled={!canSave}
           className="h-10 shrink-0 rounded-lg bg-blue-600 px-4 text-sm font-bold text-white disabled:bg-gray-300"
         >
-          변경사항 저장
+          {updateMeMutation.isPending ? '저장 중' : '변경사항 저장'}
         </button>
       </div>
 
@@ -152,7 +179,7 @@ export function MyEditPage() {
             이메일
             <input
               type="email"
-              value={MOCK_MEMBER.email}
+              value={me.email}
               disabled
               className="h-12 rounded-lg border border-gray-200 bg-white px-4 text-sm font-normal text-gray-900"
             />

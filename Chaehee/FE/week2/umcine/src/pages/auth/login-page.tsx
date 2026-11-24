@@ -1,5 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { useState, type SubmitEvent } from 'react';
+import { useLoginMutation } from '../../hooks/use-login-mutation';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const DEFAULT_FORM = {
   email: '',
@@ -15,7 +18,8 @@ const inputClass = 'min-w-0 flex-1 bg-transparent text-sm outline-none placehold
 export function LoginPage() {
   const [form, setForm] = useState(DEFAULT_FORM);
 
-  const canSubmit = form.email.trim().length > 0 && form.password.length > 0;
+  const loginMutation = useLoginMutation();
+  const canSubmit = EMAIL_REGEX.test(form.email.trim()) && form.password.length > 0;
 
   const handleChangeField = (key: LoginFormKey, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -23,9 +27,12 @@ export function LoginPage() {
 
   const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (!canSubmit || loginMutation.isPending) return;
 
-    alert('로그인 기능은 준비 중이에요.');
+    loginMutation.mutate({
+      email: form.email.trim(),
+      password: form.password,
+    });
   };
 
   return (
@@ -63,10 +70,10 @@ export function LoginPage() {
 
         <button
           type="submit"
-          disabled={!canSubmit}
+          disabled={!canSubmit || loginMutation.isPending}
           className="mt-2 h-12 rounded-lg bg-blue-600 text-sm font-bold text-white disabled:bg-gray-300"
         >
-          로그인
+          {loginMutation.isPending ? '로그인 중' : '로그인'}
         </button>
       </form>
 

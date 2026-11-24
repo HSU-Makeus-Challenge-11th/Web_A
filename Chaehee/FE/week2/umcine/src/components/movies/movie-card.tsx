@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import type { TmdbMovieListItem } from '../../api/movies/models';
+import { useFavoritesQuery } from '../../hooks/use-favorites-query';
 import { getTmdbPosterUrl } from '../../utils/movies/tmdb-image';
 import { BookmarkButton } from '../bookmark-button';
 
@@ -9,6 +10,8 @@ interface MovieCardProps {
 
 function MovieCard({ movie }: MovieCardProps) {
   const posterUrl = getTmdbPosterUrl(movie.poster_path);
+  const { data: favorites } = useFavoritesQuery();
+  const isFavorite = favorites?.some((favorite) => favorite.movieId === movie.id) ?? false;
 
   return (
     <div className="relative">
@@ -37,7 +40,7 @@ function MovieCard({ movie }: MovieCardProps) {
       </Link>
 
       <div className="absolute right-3 top-3 rounded-lg bg-white/90 px-2.5 py-1.5 text-xs font-semibold text-gray-900">
-        <BookmarkButton movieId={movie.id} />
+        <BookmarkButton movieId={movie.id} isFavorite={isFavorite} />
       </div>
     </div>
   );

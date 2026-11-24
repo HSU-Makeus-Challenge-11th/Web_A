@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
 import { getMovieDetail } from '../../api/movies/get-movie-detail';
 import { BookmarkButton } from '../../components/bookmark-button';
+import { MyRatingPanel } from '../../components/movies/my-rating-panel';
+import { useFavoriteStatusQuery } from '../../hooks/use-favorites-query';
 import { formatRuntime } from '../../utils/movies/format-runtime';
 import { getMovieDetailErrorMessage } from '../../utils/movies/get-movie-detail-error-message';
 import { getTmdbBackdropUrl, getTmdbPosterUrl } from '../../utils/movies/tmdb-image';
@@ -16,6 +18,7 @@ export function MovieDetailPage() {
     queryFn: () => getMovieDetail(parsedMovieId),
     enabled: isValidMovieId,
   });
+  const favoriteStatusQuery = useFavoriteStatusQuery(parsedMovieId);
 
   const statusMessage = !isValidMovieId
     ? '올바르지 않은 영화 번호예요.'
@@ -99,41 +102,14 @@ export function MovieDetailPage() {
           </h2>
           <p className="text-[15px] leading-relaxed text-gray-500">{movie.overview}</p>
           <div className="mt-1 flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white">
-            <BookmarkButton movieId={movie.id} />
+            <BookmarkButton
+              movieId={movie.id}
+              isFavorite={favoriteStatusQuery.data?.isFavorite ?? false}
+            />
           </div>
         </div>
 
-        <aside className="flex flex-col gap-2 md:col-span-2 lg:col-span-1 lg:border-l lg:border-gray-200 lg:pl-8">
-          <div>
-            <h2 className="text-lg font-extrabold tracking-tight text-gray-900">내 평점</h2>
-            <p className="mt-1 text-xs text-gray-400">별점은 필수, 후기는 선택이에요.</p>
-          </div>
-
-          <div className="mt-1 flex gap-1.5">
-            {[1, 2, 3, 4, 5].map((score) => (
-              <button
-                key={score}
-                type="button"
-                aria-label={`${score}점`}
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white"
-              >
-                <img src="/icons/movie-icons/star.svg" alt="" className="h-4 w-4 opacity-70" />
-              </button>
-            ))}
-          </div>
-
-          <textarea
-            aria-label="후기"
-            placeholder="영화를 보고 느낀 점을 남겨보세요."
-            className="h-[100px] w-full resize-none rounded-xl border border-gray-200 bg-white p-3 text-sm placeholder:text-gray-400"
-          />
-          <button
-            type="button"
-            className="h-10 w-full rounded-lg bg-gray-900 text-sm font-semibold text-white"
-          >
-            평점 저장
-          </button>
-        </aside>
+        <MyRatingPanel movieId={movie.id} />
       </section>
     </main>
   );

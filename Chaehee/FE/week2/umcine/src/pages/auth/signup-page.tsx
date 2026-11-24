@@ -1,8 +1,8 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { useState, type SubmitEvent } from 'react';
 import { checkEmail } from '../../api/members/check-email';
 import { checkNickname } from '../../api/members/check-nickname';
-import { signup } from '../../api/members/signup';
+import { useSignupMutation } from '../../hooks/use-signup-mutation';
 import { cn } from '../../utils/cn';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -101,27 +101,17 @@ export function SignupPage() {
     }
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
+  const signupMutation = useSignupMutation();
 
-  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!canSubmit || isSubmitting) return;
+    if (!canSubmit || signupMutation.isPending) return;
 
-    setIsSubmitting(true);
-    try {
-      const response = await signup({
-        email: form.email.trim(),
-        nickname: form.nickname.trim(),
-        password: form.password,
-      });
-      alert(response.message);
-      navigate({ to: '/login' });
-    } catch {
-      alert('회원가입에 실패했어요. 다시 시도해 주세요.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    signupMutation.mutate({
+      email: form.email.trim(),
+      nickname: form.nickname.trim(),
+      password: form.password,
+    });
   };
 
   return (
@@ -233,10 +223,10 @@ export function SignupPage() {
 
         <button
           type="submit"
-          disabled={!canSubmit || isSubmitting}
+          disabled={!canSubmit || signupMutation.isPending}
           className="mt-2 h-12 rounded-lg bg-blue-600 text-sm font-bold text-white disabled:bg-gray-300"
         >
-          {isSubmitting ? '가입 중' : '가입하기'}
+          {signupMutation.isPending ? '가입 중' : '가입하기'}
         </button>
       </form>
 

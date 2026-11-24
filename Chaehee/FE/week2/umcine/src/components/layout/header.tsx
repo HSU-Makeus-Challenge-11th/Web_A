@@ -1,4 +1,6 @@
 import { Link, useLocation } from '@tanstack/react-router';
+import { useMeQuery } from '../../hooks/use-me-query';
+import { useAuthStore } from '../../stores/auth-store';
 import { cn } from '../../utils/cn';
 
 const navLinkBase = 'text-base font-semibold text-gray-600';
@@ -9,6 +11,9 @@ export function Header() {
   const isMovieActive = pathname === '/' || pathname.startsWith('/movies');
   const isSearchActive = pathname.startsWith('/search');
   const isMyActive = pathname.startsWith('/my');
+
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const meQuery = useMeQuery();
 
   return (
     <header className="border-b border-gray-200 bg-white">
@@ -40,12 +45,23 @@ export function Header() {
           >
             <img src="/icons/movie-icons/search.svg" alt="" className="h-5 w-5 opacity-70" />
           </Link>
-          <Link
-            to="/login"
-            className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white"
-          >
-            로그인
-          </Link>
+          {!accessToken ? (
+            <Link
+              to="/login"
+              className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white"
+            >
+              로그인
+            </Link>
+          ) : meQuery.isLoading ? (
+            <span className="h-10 w-24 animate-pulse rounded-lg bg-gray-200" />
+          ) : (
+            <Link
+              to="/my"
+              className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white"
+            >
+              마이페이지
+            </Link>
+          )}
         </div>
       </div>
     </header>

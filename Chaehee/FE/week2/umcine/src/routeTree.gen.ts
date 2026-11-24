@@ -11,11 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as MyRouteImport } from './routes/my'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as protectedProtectedRouteImport } from './routes/(protected)/_protected'
 import { Route as MoviesMovieIdRouteImport } from './routes/movies.$movieId'
-import { Route as MyEditRouteImport } from './routes/my_.edit'
+import { Route as protectedProtectedMyRouteImport } from './routes/(protected)/_protected/my'
+import { Route as protectedProtectedMyEditRouteImport } from './routes/(protected)/_protected/my_.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -25,11 +26,6 @@ const IndexRoute = IndexRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MyRoute = MyRouteImport.update({
-  id: '/my',
-  path: '/my',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -42,83 +38,94 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const protectedProtectedRoute = protectedProtectedRouteImport.update({
+  id: '/(protected)/_protected',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MoviesMovieIdRoute = MoviesMovieIdRouteImport.update({
   id: '/movies/$movieId',
   path: '/movies/$movieId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MyEditRoute = MyEditRouteImport.update({
-  id: '/my_/edit',
-  path: '/my/edit',
-  getParentRoute: () => rootRouteImport,
+const protectedProtectedMyRoute = protectedProtectedMyRouteImport.update({
+  id: '/my',
+  path: '/my',
+  getParentRoute: () => protectedProtectedRoute,
 } as any)
+const protectedProtectedMyEditRoute =
+  protectedProtectedMyEditRouteImport.update({
+    id: '/my_/edit',
+    path: '/my/edit',
+    getParentRoute: () => protectedProtectedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/my': typeof MyRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/movies/$movieId': typeof MoviesMovieIdRoute
-  '/my/edit': typeof MyEditRoute
+  '/my': typeof protectedProtectedMyRoute
+  '/my/edit': typeof protectedProtectedMyEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/my': typeof MyRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/movies/$movieId': typeof MoviesMovieIdRoute
-  '/my/edit': typeof MyEditRoute
+  '/my': typeof protectedProtectedMyRoute
+  '/my/edit': typeof protectedProtectedMyEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/my': typeof MyRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
+  '/(protected)/_protected': typeof protectedProtectedRouteWithChildren
   '/movies/$movieId': typeof MoviesMovieIdRoute
-  '/my_/edit': typeof MyEditRoute
+  '/(protected)/_protected/my': typeof protectedProtectedMyRoute
+  '/(protected)/_protected/my_/edit': typeof protectedProtectedMyEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/login'
-    | '/my'
     | '/search'
     | '/signup'
     | '/movies/$movieId'
+    | '/my'
     | '/my/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
-    | '/my'
     | '/search'
     | '/signup'
     | '/movies/$movieId'
+    | '/my'
     | '/my/edit'
   id:
     | '__root__'
     | '/'
     | '/login'
-    | '/my'
     | '/search'
     | '/signup'
+    | '/(protected)/_protected'
     | '/movies/$movieId'
-    | '/my_/edit'
+    | '/(protected)/_protected/my'
+    | '/(protected)/_protected/my_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
-  MyRoute: typeof MyRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
+  protectedProtectedRoute: typeof protectedProtectedRouteWithChildren
   MoviesMovieIdRoute: typeof MoviesMovieIdRoute
-  MyEditRoute: typeof MyEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -137,13 +144,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/my': {
-      id: '/my'
-      path: '/my'
-      fullPath: '/my'
-      preLoaderRoute: typeof MyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -158,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(protected)/_protected': {
+      id: '/(protected)/_protected'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof protectedProtectedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/movies/$movieId': {
       id: '/movies/$movieId'
       path: '/movies/$movieId'
@@ -165,24 +172,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MoviesMovieIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/my_/edit': {
-      id: '/my_/edit'
+    '/(protected)/_protected/my': {
+      id: '/(protected)/_protected/my'
+      path: '/my'
+      fullPath: '/my'
+      preLoaderRoute: typeof protectedProtectedMyRouteImport
+      parentRoute: typeof protectedProtectedRoute
+    }
+    '/(protected)/_protected/my_/edit': {
+      id: '/(protected)/_protected/my_/edit'
       path: '/my/edit'
       fullPath: '/my/edit'
-      preLoaderRoute: typeof MyEditRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof protectedProtectedMyEditRouteImport
+      parentRoute: typeof protectedProtectedRoute
     }
   }
 }
 
+interface protectedProtectedRouteChildren {
+  protectedProtectedMyRoute: typeof protectedProtectedMyRoute
+  protectedProtectedMyEditRoute: typeof protectedProtectedMyEditRoute
+}
+
+const protectedProtectedRouteChildren: protectedProtectedRouteChildren = {
+  protectedProtectedMyRoute: protectedProtectedMyRoute,
+  protectedProtectedMyEditRoute: protectedProtectedMyEditRoute,
+}
+
+const protectedProtectedRouteWithChildren =
+  protectedProtectedRoute._addFileChildren(protectedProtectedRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
-  MyRoute: MyRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
+  protectedProtectedRoute: protectedProtectedRouteWithChildren,
   MoviesMovieIdRoute: MoviesMovieIdRoute,
-  MyEditRoute: MyEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

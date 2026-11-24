@@ -6,6 +6,7 @@ import com.umc.movie.dto.CreateMovieRecordRequest;
 import com.umc.movie.dto.MovieRecordResponse;
 import com.umc.movie.interceptor.AuthInterceptor;
 import com.umc.movie.service.MovieRecordService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "영화 기록", description = "평점과 즐겨찾기를 함께 저장하는 API")
 public class MovieRecordController {
 
     private final MovieRecordService movieRecordService;

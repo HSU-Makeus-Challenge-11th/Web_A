@@ -80,6 +80,26 @@ class MovieApplicationTests {
     }
 
     @Test
+    void creatingRatingWithoutTokenReturns401() throws Exception {
+        mvc.perform(post("/ratings").contentType(APPLICATION_JSON)
+                        .content("{\"movieId\":550,\"score\":4}"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("AUTH401_2"));
+        assertThat(ratings.count()).isZero();
+    }
+
+    @Test
+    void creatingRatingWithTokenReturns201AndStoresItForTokenOwner() throws Exception {
+        long owner = signUp("owner@example.com", "owner");
+        mvc.perform(post("/ratings").header(AUTHORIZATION, bearerToken(owner, "owner@example.com"))
+                        .contentType(APPLICATION_JSON).content("{\"movieId\":550,\"score\":4}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.code").value("COMMON201"))
+                .andExpect(jsonPath("$.result.movieId").value(550));
+        assertThat(ratings.existsByMember_MemberIdAndMovieId(owner, 550L)).isTrue();
+    }
+
+    @Test
     void ratingLifecycleAndOwnership() throws Exception {
         long owner = signUp("owner@example.com", "owner");
         long other = signUp("other@example.com", "other");

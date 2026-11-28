@@ -20,6 +20,7 @@ export const useViewSettingsStore = create<ViewSettingsStore>()(
       partialize: (state) => ({
         sortOrder: state.sortOrder,
       }),
+      skipHydration: true,
     },
   ),
 );

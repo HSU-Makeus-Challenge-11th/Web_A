@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuthHydrated } from '../../hooks/use-auth-hydrated';
 import { useMeQuery } from '../../hooks/use-me-query';
 import { useAuthStore } from '../../stores/auth-store';
 import { cn } from '../../utils/cn';
@@ -15,6 +16,7 @@ export function Header() {
   const isSearchActive = pathname.startsWith('/search');
   const isMyActive = pathname.startsWith('/my');
 
+  const isAuthHydrated = useAuthHydrated();
   const accessToken = useAuthStore((state) => state.accessToken);
   const meQuery = useMeQuery();
 
@@ -48,7 +50,9 @@ export function Header() {
           >
             <img src="/icons/movie-icons/search.svg" alt="" className="h-5 w-5 opacity-70" />
           </Link>
-          {!accessToken ? (
+          {!isAuthHydrated ? (
+            <span className="h-10 w-24 animate-pulse rounded-lg bg-gray-200" />
+          ) : !accessToken ? (
             <Link
               href="/login"
               className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white"

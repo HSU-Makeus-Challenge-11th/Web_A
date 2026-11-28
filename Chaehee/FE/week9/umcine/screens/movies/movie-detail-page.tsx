@@ -1,0 +1,121 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
+import { getMovieDetail } from '../../api/movies/get-movie-detail';
+import { BookmarkButton } from '../../components/bookmark-button';
+import { MyRatingPanel } from '../../components/movies/my-rating-panel';
+import { useFavoriteStatusQuery } from '../../hooks/use-favorites-query';
+import { formatRuntime } from '../../utils/movies/format-runtime';
+import { getMovieDetailErrorMessage } from '../../utils/movies/get-movie-detail-error-message';
+import { getTmdbBackdropUrl, getTmdbPosterUrl } from '../../utils/movies/tmdb-image';
+
+interface MovieDetailPageProps {
+  movieId: string;
+}
+
+export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
+  const parsedMovieId = Number(movieId);
+  const isValidMovieId = Number.isInteger(parsedMovieId) && parsedMovieId > 0;
+
+  const movieDetailQuery = useQuery({
+    queryKey: ['movies', 'detail', parsedMovieId],
+    queryFn: () => getMovieDetail(parsedMovieId),
+    enabled: isValidMovieId,
+  });
+  const favoriteStatusQuery = useFavoriteStatusQuery(parsedMovieId);
+
+  const statusMessage = !isValidMovieId
+    ? '올바르지 않은 영화 번호예요.'
+    : movieDetailQuery.isPending
+      ? '영화 정보를 불러오는 중이에요.'
+      : movieDetailQuery.isError
+        ? getMovieDetailErrorMessage(movieDetailQuery.error)
+        : null;
+
+  const movie = movieDetailQuery.data;
+
+  if (statusMessage || !movie) {
+    return (
+      <main className="mx-auto w-full max-w-[1328px] px-6 py-16">
+        <p className="text-lg font-semibold text-gray-900">
+          {statusMessage ?? '영화 정보를 불러오지 못했어요.'}
+        </p>
+      </main>
+    );
+  }
+
+  const backdropUrl = getTmdbBackdropUrl(movie.backdrop_path);
+  const posterUrl = getTmdbPosterUrl(movie.poster_path);
+
+  return (
+    <main>
+      <section className="relative h-[360px] overflow-hidden bg-neutral-900 text-white">
+        {backdropUrl ? (
+          <img
+            src={backdropUrl}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-500 text-sm text-gray-200">
+            이미지 없음
+          </div>
+        )}
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.7),rgba(0,0,0,0)_60%)]" />
+
+        <div className="relative mx-auto flex h-full w-full max-w-[1328px] flex-col justify-between px-6 pb-6 pt-7">
+          <Link href="/" className="flex w-fit items-center gap-1 text-sm font-semibold">
+            <img
+              src="/icons/movie-icons/chevron-left.svg"
+              alt=""
+              className="h-4 w-4 brightness-0 invert"
+            />
+            영화 목록
+          </Link>
+
+          <div>
+            <h1 className="text-[40px] font-extrabold leading-tight tracking-tight">
+              {movie.title}
+            </h1>
+            <p className="mt-2 text-sm">{movie.original_title}</p>
+            <p className="mt-1.5 text-sm font-semibold">
+              {movie.release_date}
+              <span className="mx-2">{movie.genres.map((genre) => genre.name).join(', ')}</span>
+              {formatRuntime(movie.runtime)}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto grid w-full max-w-[1328px] grid-cols-1 gap-8 px-6 pb-16 pt-6 md:grid-cols-[200px_1fr] lg:grid-cols-[200px_1fr_360px]">
+        {posterUrl ? (
+          <img
+            src={posterUrl}
+            alt={`${movie.title} 포스터`}
+            className="aspect-[7/10] w-[200px] self-start rounded-xl object-cover shadow-lg"
+          />
+        ) : (
+          <div className="flex aspect-[7/10] w-[200px] items-center justify-center self-start rounded-xl bg-gray-200 text-sm text-gray-500">
+            이미지 없음
+          </div>
+        )}
+
+        <div className="flex flex-col items-start gap-3">
+          <h2 className="text-xl font-extrabold leading-snug tracking-tight text-gray-900">
+            {movie.tagline}
+          </h2>
+          <p className="text-[15px] leading-relaxed text-gray-500">{movie.overview}</p>
+          <div className="mt-1 flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white">
+            <BookmarkButton
+              movieId={movie.id}
+              isFavorite={favoriteStatusQuery.data?.isFavorite ?? false}
+            />
+          </div>
+        </div>
+
+        <MyRatingPanel movieId={movie.id} />
+      </section>
+    </main>
+  );
+}
